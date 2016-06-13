@@ -1,7 +1,7 @@
 // Karma configuration
 // Generated on Tue Dec 08 2015 23:01:01 GMT-0800 (Pacific Standard Time)
 
-module.exports = function (config) {
+module.exports = function(config) {
   // Check out https://saucelabs.com/platforms for expanding browser coverage
   // some browsers are disabled due to selenium fails to start browser instance.
   // will be re enabled once issue's resolved.
@@ -136,31 +136,40 @@ module.exports = function (config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['browserify', 'jasmine'],
+    frameworks: ['mocha', 'chai-sinon'],
 
     // list of files / patterns to load in the browser
     files: [
-      'node_modules/babel-polyfill/dist/polyfill.js',
-      'spec-js/helpers/marble-testing.js',
-      'spec-js/helpers/test-helper.js',
-      'spec-js/helpers/ajax-helper.js',
-      'spec-js/**/*-spec.js'
+      'test.index.ts'
     ],
 
     // list of files to exclude
-    exclude: [
-    ],
+    exclude: [],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'spec-js/**/*.js': ['browserify']
+      //'spec/**/!(*.d).ts': ['webpack'], //'sourcemap' Use karma-sourcemap-loader
+      'test.index.ts': ['webpack']
+    },
+
+    webpack: {
+      resolve: {
+        extensions: ['.ts', '.js', '.tsx', '.jsx', '']
+      },
+      module: {
+        loaders: [{
+          test: /\.tsx?$/,
+          exclude: /node_modules/,
+          loader: 'ts-loader'
+        }]
+      }
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['dots','saucelabs'],
+    reporters: ['dots'], //,'saucelabs'
 
     // web server port
     port: 9876,
@@ -178,7 +187,7 @@ module.exports = function (config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     customLaunchers: customLaunchers,
-    browsers: process.env.TRAVIS ? Object.keys(customLaunchers) : ['Chrome'],
+    browsers: process.env.TRAVIS ? Object.keys(customLaunchers) : ['PhantomJS'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
