@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import * as Rx from '../../dist/cjs/Rx';
 declare const {hot, cold, expectObservable, expectSubscriptions};
 
-declare const Symbol: any;
+declare const Symbol: any, asDiagram: any;
 declare const rxTestScheduler: Rx.TestScheduler;
 const Observable = Rx.Observable;
 

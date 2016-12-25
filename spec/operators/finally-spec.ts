@@ -3,7 +3,7 @@ import * as Rx from '../../dist/cjs/Rx';
 
 const Observable = Rx.Observable;
 
-declare const {asDiagram, expectObservable, Symbol, type};
+declare const {hot, cold, asDiagram, expectObservable, expectSubscriptions, Symbol, type};
 declare const rxTestScheduler: Rx.TestScheduler;
 
 /** @test {finally} */

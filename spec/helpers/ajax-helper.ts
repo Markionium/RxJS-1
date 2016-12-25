@@ -47,7 +47,7 @@ export class MockWebSocket {
     const messageEvent = {
       data: data,
       origin: 'mockorigin',
-      ports: undefined,
+      ports: undefined as any,
       source: __root__,
     };
 
@@ -237,7 +237,7 @@ export class MockXMLHttpRequest {
       this['on' + name](e);
     }
 
-    this.eventHandlers.forEach(function (eh) {
+    this.eventHandlers.forEach(function (this: any, eh: any) {
       if (eh.name === name) {
         eh.handler.call(this, e);
       }

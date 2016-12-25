@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 import * as Rx from '../../dist/cjs/Rx';
 
+declare const expectObservable: any;
 const Observable = Rx.Observable;
 
 describe('Observable.if', () => {

@@ -1,19 +1,14 @@
-///<reference path='../../typings/index.d.ts'/>
-///<reference path='ambient.d.ts'/>
+const _ = require('lodash');
+const commonInterface = require('mocha/lib/interfaces/common');
+const escapeRe = require('escape-string-regexp');
+const chai = require('chai');
+const sinonChai = require('sinon-chai');
 
-import * as _ from 'lodash';
-import * as commonInterface from 'mocha/lib/interfaces/common';
-import * as escapeRe from 'escape-string-regexp';
-import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-
-import * as Rx from '../../dist/cjs/Rx';
-import * as marble from './marble-testing';
+const Rx = require('../../dist/cjs/Rx');
+const marble = require('./marble-testing');
 
 //setup sinon-chai
 chai.use(sinonChai);
-
-declare const module, global, Suite, Test: any;
 
 if (!global.Promise) {
   global.Promise = require('promise'); // tslint:disable-line
@@ -27,7 +22,7 @@ module.exports = function(suite) {
   const suites = [suite];
 
   suite.on('pre-require', function(context, file, mocha) {
-    const common = (<any>commonInterface)(suites, context);
+    const common = commonInterface(suites, context);
 
     context.before = common.before;
     context.after = common.after;
@@ -52,7 +47,7 @@ module.exports = function(suite) {
      */
 
     context.describe = context.context = function(title, fn) {
-      const suite = (<any>Suite).create(suites[0], title);
+      const suite = Suite.create(suites[0], title);
       suite.file = file;
       suites.unshift(suite);
       fn.call(suite);
@@ -65,7 +60,7 @@ module.exports = function(suite) {
      */
 
     context.xdescribe = context.xcontext = context.describe.skip = function(title, fn) {
-      const suite = (<any>Suite).create(suites[0], title);
+      const suite = Suite.create(suites[0], title);
       suite.pending = true;
       suites.unshift(suite);
       fn.call(suite);
@@ -93,7 +88,7 @@ module.exports = function(suite) {
       //or infinite source. Suffecient to check build time only.
     };
 
-    function stringify(x): string {
+    function stringify(x) {
       return JSON.stringify(x, function (key, value) {
         if (Array.isArray(value)) {
           return '[' + value
@@ -155,9 +150,9 @@ module.exports = function(suite) {
       let modified = fn;
 
       if (fn && fn.length === 0) {
-        modified = function (done: MochaDone) {
+        modified = function (done) {
           context.rxTestScheduler = new Rx.TestScheduler(observableMatcher);
-          let error: Error = null;
+          let error = null;
 
           try {
             fn();
@@ -175,7 +170,7 @@ module.exports = function(suite) {
       if (suite.pending) {
         modified = null;
       }
-      const test = new (<any>Test)(title, modified);
+      const test = new Test(title, modified);
       test.file = file;
       suite.addTest(test);
       return test;
@@ -199,7 +194,7 @@ module.exports = function(suite) {
 
     context.it.only = function(title, fn) {
       const test = it(title, fn);
-      const reString = '^' + (<any>escapeRe)(test.fullTitle()) + '$';
+      const reString = '^' + escapeRe(test.fullTitle()) + '$';
       mocha.grep(new RegExp(reString));
       return test;
     };
@@ -223,9 +218,9 @@ module.exports = function(suite) {
 
 //register into global instnace if browser test page injects mocha globally
 if (global.Mocha) {
-  (<any>window).Mocha.interfaces['testschedulerui'] = module.exports;
+  window.Mocha.interfaces['testschedulerui'] = module.exports;
 } else {
-  (<any>mocha).interfaces['testschedulerui'] = module.exports;
+  mocha.interfaces['testschedulerui'] = module.exports;
 }
 
 //overrides JSON.toStringfy to serialize error object

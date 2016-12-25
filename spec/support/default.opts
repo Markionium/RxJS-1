@@ -1,8 +1,8 @@
 --require source-map-support/register
 --require spec/support/mocha-setup-node.js
---require spec-js/helpers/test-helper.js
---require spec-js/helpers/ajax-helper.js
---ui spec-js/helpers/testScheduler-ui.js
+--require spec/helpers/test-helper.ts
+--require spec/helpers/ajax-helper.ts
+--ui spec/helpers/testScheduler-ui.js
 
 --reporter dot
 
