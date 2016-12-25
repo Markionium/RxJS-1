@@ -1,4 +1,6 @@
 import * as Rx from '../../dist/cjs/Rx';
+import {expect} from 'chai';
+
 declare const {hot, asDiagram, expectObservable, expectSubscriptions};
 
 const Observable = Rx.Observable;
@@ -145,5 +147,18 @@ describe('Observable.prototype.single', () => {
 
     expectObservable(e1.single(predicate)).toBe(expected, {z: undefined});
     expectSubscriptions(e1.subscriptions).toBe(e1subs);
+  });
+
+  it('should allow operator chain passes extended class', () => {
+    class ExtendedObservable<T> extends Observable<T> {
+      public answer(): number {
+        return 42;
+      }
+    }
+
+    const chained = new ExtendedObservable<string>().single();
+
+    expect(chained.answer).to.exist;
+    expect(chained.answer()).to.be.equal(42);
   });
 });
