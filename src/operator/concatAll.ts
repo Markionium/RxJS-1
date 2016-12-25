@@ -56,5 +56,5 @@ export function concatAll<T, R>(this: Observable<T>): Subscribable<R>;
  * @owner Observable
  */
 export function concatAll<T>(this: Observable<T>): T {
-  return <any>this.lift<any>(new MergeAllOperator<T>(1));
+  return <any>this.lift<any, Observable<T>>(new MergeAllOperator<T>(1));
 }

@@ -49,7 +49,7 @@ export function find<T>(this: Observable<T>, predicate: (value: T, index: number
   if (typeof predicate !== 'function') {
     throw new TypeError('predicate is not a function');
   }
-  return <any>this.lift<any>(new FindValueOperator(predicate, this, false, thisArg));
+  return <any>this.lift<any, Observable<T>>(new FindValueOperator(predicate, this, false, thisArg));
 }
 
 export class FindValueOperator<T> implements Operator<T, T> {

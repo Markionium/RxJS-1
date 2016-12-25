@@ -50,7 +50,7 @@ import { subscribeToResult } from '../util/subscribeToResult';
  * @owner Observable
  */
 export function mergeAll<T>(this: Observable<T>, concurrent: number = Number.POSITIVE_INFINITY): T {
-  return <any>this.lift<any>(new MergeAllOperator<T>(concurrent));
+  return <any>this.lift<any, Observable<T>>(new MergeAllOperator<T>(concurrent));
 }
 
 export class MergeAllOperator<T> implements Operator<Observable<T>, T> {

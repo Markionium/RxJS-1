@@ -49,7 +49,7 @@ import { subscribeToResult } from '../util/subscribeToResult';
  * @owner Observable
  */
 export function _switch<T>(this: Observable<T>): T {
-  return <any>this.lift<any>(new SwitchOperator());
+  return <any>this.lift<any, Observable<T>>(new SwitchOperator());
 }
 
 class SwitchOperator<T, R> implements Operator<T, R> {
