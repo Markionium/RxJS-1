@@ -64,8 +64,8 @@ export class Observable<T> implements Subscribable<T> {
    * @param {Operator} operator the operator defining the operation to take on the observable
    * @return {Observable} a new observable with the Operator applied
    */
-  lift<R>(operator: Operator<T, R>): Observable<R> {
-    const observable = new Observable<R>();
+  lift<R, U extends Observable<R>>(operator: Operator<T, R>): U {
+    const observable = new (this as any).constructor();
     observable.source = this;
     observable.operator = operator;
     return observable;
