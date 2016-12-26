@@ -370,7 +370,7 @@ describe('Observable.prototype.concatAll', () => {
     const e2subs =   '            ^      !';
     const expected = '--a--b--c----x-y-z-|';
 
-    const result = Observable.of<Rx.Observable<string>>(e1, e2).concatAll();
+    const result = Observable.of(e1, e2).concatAll();
 
     expectObservable(result).toBe(expected);
     expectSubscriptions(e1.subscriptions).toBe(e1subs);
@@ -384,7 +384,7 @@ describe('Observable.prototype.concatAll', () => {
     const e2subs =   '           ^     !';
     const expected = '--a--b--c--y--z--|';
 
-    const result = Observable.of<Rx.Observable<string>>(e1, e2).concatAll();
+    const result = Observable.of(e1, e2).concatAll();
 
     expectObservable(result).toBe(expected);
     expectSubscriptions(e1.subscriptions).toBe(e1subs);
@@ -400,7 +400,7 @@ describe('Observable.prototype.concatAll', () => {
     const e3subs =    '          ^     !';
     const expected =  '---a---b-----c--|';
 
-    const result = Observable.of<Rx.Observable<string>>(e1, e2, e3, rxTestScheduler).concatAll();
+    const result = Observable.of(e1, e2, e3, rxTestScheduler).concatAll();
 
     expectObservable(result).toBe(expected);
     expectSubscriptions(e1.subscriptions).toBe(e1subs);
@@ -424,7 +424,7 @@ describe('Observable.prototype.concatAll', () => {
     const e1subs =    '^    !';
     const expected =  '---a-|';
 
-    const result = Observable.of<Rx.Observable<string>>(e1, rxTestScheduler).concatAll();
+    const result = Observable.of(e1, rxTestScheduler).concatAll();
 
     expectObservable(result).toBe(expected);
     expectSubscriptions(e1.subscriptions).toBe(e1subs);

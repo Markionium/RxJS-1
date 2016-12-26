@@ -21,6 +21,11 @@ describe('Subject', () => {
     subject.complete();
   });
 
+  it('should not allow static creation method', () => {
+    expect(Subject.of).to.not.exist;
+    expect(() => Subject.of()).to.throw();
+  });
+
   it('should pump values to multiple subscribers', (done: MochaDone) => {
     const subject = new Subject();
     const expected = ['foo', 'bar'];

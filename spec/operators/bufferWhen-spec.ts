@@ -298,7 +298,7 @@ describe('Observable.prototype.bufferWhen', () => {
   // buffer in a synchronous infinite loop until the stack overflows. This also
   // happens with buffer in RxJS 4.
   it('should NOT handle hot inner empty', (done: MochaDone) => {
-    const source = Observable.of(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    const source = (Observable as any).of(1, 2, 3, 4, 5, 6, 7, 8, 9);
     const closing = Observable.empty();
     const TOO_MANY_INVOCATIONS = 30;
 

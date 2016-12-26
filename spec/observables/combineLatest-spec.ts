@@ -19,8 +19,8 @@ describe('Observable.combineLatest', () => {
   });
 
   it('should combine an immediately-scheduled source with an immediately-scheduled second', (done: MochaDone) => {
-    const a = Observable.of<number>(1, 2, 3, queueScheduler);
-    const b = Observable.of<number>(4, 5, 6, 7, 8, queueScheduler);
+    const a = Observable.of(1, 2, 3, queueScheduler);
+    const b = Observable.of(4, 5, 6, 7, 8, queueScheduler);
     const r = [[1, 4], [2, 4], [2, 5], [3, 5], [3, 6], [3, 7], [3, 8]];
 
     //type definition need to be updated

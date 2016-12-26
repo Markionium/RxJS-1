@@ -25,7 +25,6 @@ import './add/observable/interval';
 import './add/observable/merge';
 import './add/observable/race';
 import './add/observable/never';
-import './add/observable/of';
 import './add/observable/onErrorResumeNext';
 import './add/observable/pairs';
 import './add/observable/range';

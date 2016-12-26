@@ -212,7 +212,7 @@ describe('Observable.prototype.repeat', () => {
   });
 
   it('should terminate repeat and throw if source subscription to _next throws', () => {
-    const e1 = Observable.of<number>(1, 2, rxTestScheduler);
+    const e1 = Observable.of(1, 2, rxTestScheduler);
     e1.subscribe(() => { throw new Error('error'); });
 
     expect(() => {
@@ -222,7 +222,7 @@ describe('Observable.prototype.repeat', () => {
   });
 
   it('should terminate repeat and throw if source subscription to _complete throws', () => {
-    const e1 = Observable.of<number>(1, 2, rxTestScheduler);
+    const e1 = Observable.of(1, 2, rxTestScheduler);
     e1.subscribe(() => {
       //noop
     }, () => {
@@ -236,7 +236,7 @@ describe('Observable.prototype.repeat', () => {
   });
 
   it('should terminate repeat and throw if source subscription to _next throws when repeating infinitely', () => {
-    const e1 = Observable.of<number>(1, 2, rxTestScheduler);
+    const e1 = Observable.of(1, 2, rxTestScheduler);
     e1.subscribe(() => { throw new Error('error'); });
 
     expect(() => {
@@ -246,7 +246,7 @@ describe('Observable.prototype.repeat', () => {
   });
 
   it('should terminate repeat and throw if source subscription to _complete throws when repeating infinitely', () => {
-    const e1 = Observable.of<number>(1, 2, rxTestScheduler);
+    const e1 = Observable.of(1, 2, rxTestScheduler);
     e1.subscribe(() => {
       //noop
     }, () => {

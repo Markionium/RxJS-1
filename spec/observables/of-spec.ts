@@ -23,7 +23,7 @@ describe('Observable.of', () => {
     const expected = [1, 'a', x];
     let i = 0;
 
-    Observable.of<any>(1, 'a', x)
+    Observable.of<any, Rx.Observable<any>>(1, 'a', x)
       .subscribe((y: any) => {
         expect(y).to.equal(expected[i++]);
       }, (x) => {
@@ -35,27 +35,27 @@ describe('Observable.of', () => {
 
   it('should return a scalar observable if only passed one value', () => {
     const obs = Observable.of('one');
-    expect(obs instanceof ScalarObservable).to.be.true;
+    expect((obs as any).source instanceof ScalarObservable).to.be.true;
   });
 
   it('should return a scalar observable if only passed one value and a scheduler', () => {
-    const obs = Observable.of<string>('one', Rx.Scheduler.queue);
-    expect(obs instanceof ScalarObservable).to.be.true;
+    const obs = Observable.of('one', Rx.Scheduler.queue);
+    expect((obs as any).source instanceof ScalarObservable).to.be.true;
   });
 
   it('should return an array observable if passed many values', () => {
     const obs = Observable.of('one', 'two', 'three');
-    expect(obs instanceof ArrayObservable).to.be.true;
+    expect((obs as any).source instanceof ArrayObservable).to.be.true;
   });
 
   it('should return an empty observable if passed no values', () => {
-    const obs = Observable.of();
-    expect(obs instanceof EmptyObservable).to.be.true;
+    const obs = (Observable as any).of();
+    expect((obs as any).source instanceof EmptyObservable).to.be.true;
   });
 
   it('should return an empty observable if passed only a scheduler', () => {
     const obs = Observable.of(Rx.Scheduler.queue);
-    expect(obs instanceof EmptyObservable).to.be.true;
+    expect((obs as any).source instanceof EmptyObservable).to.be.true;
   });
 
   it('should emit one value', (done: MochaDone) => {
@@ -72,24 +72,43 @@ describe('Observable.of', () => {
   });
 
   it('should handle an Observable as the only value', () => {
-    const source = Observable.of<Rx.Observable<string>>(
-      Observable.of<string>('a', 'b', 'c', rxTestScheduler),
+    const source = Observable.of(
+      Observable.of('a', 'b', 'c', rxTestScheduler),
       rxTestScheduler
     );
-    expect(source instanceof ScalarObservable).to.be.true;
+    expect((source as any).source instanceof ScalarObservable).to.be.true;
     const result = source.concatAll();
     expectObservable(result).toBe('(abc|)');
   });
 
   it('should handle many Observable as the given values', () => {
-    const source = Observable.of<Rx.Observable<string>>(
-      Observable.of<string>('a', 'b', 'c', rxTestScheduler),
-      Observable.of<string>('d', 'e', 'f', rxTestScheduler),
+    const source = Observable.of(
+      Observable.of('a', 'b', 'c', rxTestScheduler),
+      Observable.of('d', 'e', 'f', rxTestScheduler),
       rxTestScheduler
     );
-    expect(source instanceof ArrayObservable).to.be.true;
+    expect((source as any).source instanceof ArrayObservable).to.be.true;
 
     const result = source.concatAll();
     expectObservable(result).toBe('(abcdef|)');
+  });
+
+  it('should create given subclass instance', (done: MochaDone) => {
+    const answer = 42;
+    class ActionsObservable<T> extends Observable<T> {
+      public test(): number {
+        return answer;
+      }
+    }
+
+    expect(ActionsObservable.of).to.exist;
+    const e1 = ActionsObservable.of({foo: answer});
+    expect(e1.test).to.exist;
+    expect(e1.test()).to.be.equal(answer);
+
+    e1.subscribe(x => {
+      expect(x.foo === answer);
+      done();
+    });
   });
 });

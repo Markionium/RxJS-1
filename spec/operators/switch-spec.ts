@@ -17,11 +17,11 @@ describe('Observable.prototype.switch', () => {
   });
 
   it('should switch to each immediately-scheduled inner Observable', (done: MochaDone) => {
-    const a = Observable.of<number>(1, 2, 3, queueScheduler);
-    const b = Observable.of<number>(4, 5, 6, queueScheduler);
+    const a = Observable.of(1, 2, 3, queueScheduler);
+    const b = Observable.of(4, 5, 6, queueScheduler);
     const r = [1, 4, 5, 6];
     let i = 0;
-    Observable.of<Rx.Observable<number>>(a, b, queueScheduler)
+    Observable.of(a, b, queueScheduler)
       .switch()
       .subscribe((x: number) => {
         expect(x).to.equal(r[i++]);
@@ -190,8 +190,8 @@ describe('Observable.prototype.switch', () => {
   });
 
   it('should handle an observable of promises, where last rejects', (done: MochaDone) => {
-    Observable.of<any>(Promise.resolve(1), Promise.resolve(2), Promise.reject(3))
-      .switch()
+    (Observable.of(Promise.resolve(1), Promise.resolve(2), Promise.reject(3))
+      .switch() as any)
       .subscribe(() => {
         done(new Error('should not be called'));
       }, (err: any) => {
@@ -206,7 +206,7 @@ describe('Observable.prototype.switch', () => {
     const expected = [1, 2, 3, 4];
     let completed = false;
 
-    Observable.of<any>(Observable.never(), Observable.never(), [1, 2, 3, 4])
+    Observable.of(Observable.never(), Observable.never(), [1, 2, 3, 4] as any)
       .switch()
       .subscribe((x: number) => {
         expect(x).to.equal(expected.shift());

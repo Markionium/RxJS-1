@@ -1,12 +1,19 @@
-import { PartialObserver } from './Observer';
-import { Operator } from './Operator';
-import { Subscriber } from './Subscriber';
-import { Subscription, AnonymousSubscription, TeardownLogic } from './Subscription';
-import { root } from './util/root';
-import { toSubscriber } from './util/toSubscriber';
-import { IfObservable } from './observable/IfObservable';
-import { ErrorObservable } from './observable/ErrorObservable';
+import {isScheduler} from './util/isScheduler';
+import {Scheduler} from './Scheduler';
+import {PartialObserver} from './Observer';
+import {Operator} from './Operator';
+import {Subscriber} from './Subscriber';
+import {AnonymousSubscription, TeardownLogic, Subscription} from './Subscription';
+import {root} from './util/root';
+import {toSubscriber} from './util/toSubscriber';
+import {IfObservable} from './observable/IfObservable';
+import {ErrorObservable} from './observable/ErrorObservable';
 import { $$observable } from './symbol/observable';
+
+declare const require: any;
+export interface ObservableConstructor<X, U extends Observable<X>> {
+  new<X>(): U;
+}
 
 export interface Subscribable<T> {
   subscribe(observerOrNext?: PartialObserver<T> | ((value: T) => void),
@@ -57,6 +64,76 @@ export class Observable<T> implements Subscribable<T> {
     return new Observable<T>(subscribe);
   };
 
+  static of<X, U extends Observable<X>>(this: ObservableConstructor<X, U>, item1: X, scheduler?: Scheduler): U;
+  static of<T, U extends Observable<T>>(this: ObservableConstructor<T, U>, item1: T, item2: T, scheduler?: Scheduler): U;
+  static of<T, U extends Observable<T>>(this: ObservableConstructor<T, U>, item1: T, item2: T, item3: T, scheduler?: Scheduler): U;
+  static of<T, U extends Observable<T>>(this: ObservableConstructor<T, U>, item1: T, item2: T, item3: T, item4: T, scheduler?: Scheduler): U;
+  static of<T, U extends Observable<T>>(this: ObservableConstructor<T, U>, item1: T, item2: T, item3: T, item4: T, item5: T, scheduler?: Scheduler): U;
+  static of<T, U extends Observable<T>>(this: ObservableConstructor<T, U>, item1: T, item2: T, item3: T, item4: T, item5: T, item6: T, scheduler?: Scheduler): U;
+  static of<T, U extends Observable<T>>(this: ObservableConstructor<T, U>, ...args: Array<T | Scheduler>): U;
+  /**
+   * Creates an Observable that emits some values you specify as arguments,
+   * immediately one after the other, and then emits a complete notification.
+   *
+   * <span class="informal">Emits the arguments you provide, then completes.
+   * </span>
+   *
+   * <img src="./img/of.png" width="100%">
+   *
+   * This static operator is useful for creating a simple Observable that only
+   * emits the arguments given, and the complete notification thereafter. It can
+   * be used for composing with other Observables, such as with {@link concat}.
+   * By default, it uses a `null` Scheduler, which means the `next`
+   * notifications are sent synchronously, although with a different Scheduler
+   * it is possible to determine when those notifications will be delivered.
+   *
+   * @example <caption>Emit 10, 20, 30, then 'a', 'b', 'c', then start ticking every second.</caption>
+   * var numbers = Rx.Observable.of(10, 20, 30);
+   * var letters = Rx.Observable.of('a', 'b', 'c');
+   * var interval = Rx.Observable.interval(1000);
+   * var result = numbers.concat(letters).concat(interval);
+   * result.subscribe(x => console.log(x));
+   *
+   * @see {@link create}
+   * @see {@link empty}
+   * @see {@link never}
+   * @see {@link throw}
+   *
+   * @param {...T} values Arguments that represent `next` values to be emitted.
+   * @param {Scheduler} [scheduler] A {@link Scheduler} to use for scheduling
+   * the emissions of the `next` notifications.
+   * @return {Observable<T>} An Observable that emits each given input value.
+   * @static true
+   * @name of
+   * @owner Observable
+   */
+  static of<R, U extends Observable<R>>(this: ObservableConstructor<R, U>, ...args: Array<R | Scheduler>): U {
+    let scheduler = args[args.length - 1] as Scheduler;
+    if (isScheduler(scheduler)) {
+      args.pop();
+    } else {
+      scheduler = null;
+    }
+
+    const ArrayObservable: any = require('./observable/ArrayObservable').ArrayObservable;
+    const ScalarObservable: any = require('./observable/ScalarObservable').ScalarObservable;
+    const EmptyObservable: any = require('./observable/EmptyObservable').EmptyObservable;
+
+    const len = args.length;
+    let source: Observable<R>;
+    if (len > 1) {
+      source = new ArrayObservable(args as Array<R>, scheduler);
+    } else if (len === 1) {
+      source = new ScalarObservable(args[0] as R, scheduler);
+    } else {
+      source = new EmptyObservable(scheduler);
+    }
+
+    const observable: U = new this<R>();
+    observable.source = source;
+    return observable;
+  }
+
   /**
    * Creates a new Observable, with this Observable as the source, and the passed
    * operator defined as the new observable's operator.
@@ -64,7 +141,7 @@ export class Observable<T> implements Subscribable<T> {
    * @param {Operator} operator the operator defining the operation to take on the observable
    * @return {Observable} a new observable with the Operator applied
    */
-  lift<R>(operator: Operator<T, R>): Observable<R> {
+  lift<R>(operator: Operator<T, R>): Observable < R > {
     const observable = new Observable<R>();
     observable.source = this;
     observable.operator = operator;
@@ -84,10 +161,10 @@ export class Observable<T> implements Subscribable<T> {
    */
   subscribe(): Subscription;
   subscribe(observer: PartialObserver<T>): Subscription;
-  subscribe(next?: (value: T) => void, error?: (error: any) => void, complete?: () => void): Subscription;
-  subscribe(observerOrNext?: PartialObserver<T> | ((value: T) => void),
-            error?: (error: any) => void,
-            complete?: () => void): Subscription {
+  subscribe(next ?: (value: T) => void, error ?: (error: any) => void, complete ?: () => void): Subscription;
+  subscribe(observerOrNext ?: PartialObserver<T> | ((value: T) => void),
+            error ?: (error: any) => void,
+            complete ?: () => void): Subscription {
 
     const { operator } = this;
     const sink = toSubscriber(observerOrNext, error, complete);
@@ -115,7 +192,7 @@ export class Observable<T> implements Subscribable<T> {
    * @return {Promise} a promise that either resolves on observable completion or
    *  rejects with the handled error
    */
-  forEach(next: (value: T) => void, PromiseCtor?: typeof Promise): Promise<void> {
+  forEach(next: (value: T) => void, PromiseCtor ? : typeof Promise): Promise < void > {
     if (!PromiseCtor) {
       if (root.Rx && root.Rx.config && root.Rx.config.Promise) {
         PromiseCtor = root.Rx.config.Promise;
