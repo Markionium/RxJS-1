@@ -19,7 +19,7 @@ module.exports = {
 
   entry: {
     'browser.testscheduler': './spec-js/helpers/testScheduler-ui.js',
-    'browser.spec': files
+    'browser.spec': files.concat(['./node_modules/babel-polyfill/dist/polyfill.js'])
   },
 
   output: {

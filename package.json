@@ -146,8 +146,10 @@
   },
   "homepage": "https://github.com/ReactiveX/RxJS",
   "devDependencies": {
+    "babel-polyfill": "^6.20.0",
     "benchmark": "^2.1.0",
     "benchpress": "2.0.0-beta.1",
+    "browserstack-runner": "^0.5.0",
     "chai": "^3.5.0",
     "color": "^0.11.1",
     "colors": "1.1.2",
@@ -172,7 +174,6 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "mocha": "^3.0.2",
-    "mocha-in-sauce": "0.0.1",
     "npm-run-all": "^3.1.0",
     "npm-scripts-info": "^0.3.4",
     "nyc": "^8.3.0",

@@ -1,0 +1,39 @@
+{
+    "test_framework": "mocha",
+    "test_path": "spec/support/mocha-browser-runner.html",
+    "debug": true,
+    "browsers": [
+        {
+            "browser": "firefox",
+            "browser_version": "latest",
+            "os": "Windows",
+            "os_version": "10"
+        },
+        {
+            "browser": "safari",
+            "browser_version": "9.1",
+            "os": "OS X",
+            "os_version": "El capitan"
+        },
+
+        {
+            "browser": "chrome",
+            "browser_version": "latest",
+            "os": "Windows",
+            "os_version": "10"
+        },
+
+        {
+            "browser": "ie",
+            "browser_version": "9.0",
+            "os": "Windows",
+            "os_version": "7"
+        },
+        {
+            "browser": "edge",
+            "browser_version": "14",
+            "os": "Windows",
+            "os_version": "10"
+        }
+    ]
+}
